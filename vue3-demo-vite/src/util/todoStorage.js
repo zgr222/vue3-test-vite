@@ -27,3 +27,20 @@ export function fetch() {
 export function save(todos) {
   localStorage.setItem(LOCAL_KEY, JSON.stringify(todos));
 }
+
+/**
+ * 根据类型返回渲染数据
+ * @param {*} todos 
+ * @param {*} visibility 
+ * @returns 过滤后的数据
+ */
+export function filter(todos, visibility = 'all') {
+  if (visibility === 'all') {
+    return todos;
+  } else if (visibility === 'active') {
+    return todos.filter(it => !it.completed);
+  } else if (visibility === 'completed') {
+    return todos.filter(it => it.completed);
+  }
+  throw new Error('invalid visibility value');
+}
