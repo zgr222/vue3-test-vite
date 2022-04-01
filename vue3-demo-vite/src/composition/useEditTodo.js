@@ -14,7 +14,8 @@ export default function useEditTodo(todosRef) {
     if (title) {
       todo.title = title;
     } else {
-      todosRef.value.splice(todosRef.value.indexOf(todo), 1);
+      const index = todosRef.value.indexOf(todo);
+      index >= 0 && todosRef.value.splice(index, 1);
     }
   }
 
