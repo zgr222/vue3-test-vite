@@ -13,21 +13,41 @@
         />
       </header>
       <section class="main">
-        <input id="toggle-all" class="toggle-all" type="checkbox" />
+        <input
+          id="toggle-all"
+          class="toggle-all"
+          type="checkbox"
+          v-model="allDoneRef"
+        />
+
+        <!-- 上面input框的一种做法
+          :checked="!checkedRef"
+          @change="allDone($event.target.checked)"
+         -->
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
           <li
             class="todo"
-            :class="{ completed: item.completed }"
+            :class="{
+              completed: item.completed,
+              editing: editingTodoRef === item,
+            }"
             v-for="item in filteredTodosRef"
             :key="item.id"
           >
             <div class="view">
               <input class="toggle" type="checkbox" v-model="item.completed" />
-              <label>{{ item.title }}</label>
+              <label @dblclick="editTodo(item)">{{ item.title }}</label>
               <button class="destroy"></button>
             </div>
-            <input class="edit" type="text" />
+            <input
+              class="edit"
+              type="text"
+              v-model="item.title"
+              @blur="editDone(item)"
+              @keyup.enter="editDone(item)"
+              @keyup.escape="cancleEdit(item)"
+            />
           </li>
         </ul>
       </section>
@@ -71,6 +91,8 @@
 import useTodoList from "./composition/useTodoList";
 import useNewTodo from "./composition/useNewTodo";
 import useFilter from "./composition/useFilter";
+import useEditTodo from "./composition/useEditTodo";
+
 export default {
   setup() {
     const { todosRef } = useTodoList(); //调用返回对象解构出来
@@ -80,6 +102,7 @@ export default {
       // ...useTodoList(),
       ...useNewTodo(todosRef),
       ...useFilter(todosRef),
+      ...useEditTodo(todosRef),
     };
   },
 };
