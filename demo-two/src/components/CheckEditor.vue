@@ -1,14 +1,53 @@
 <template>
   <div class="check-editor">
     <div class="check-editor-inner">
-      <div class="checkbox checked"></div>
-      <input type="text" class="editor" />
+      <div
+        class="checkbox"
+        :class="{ checked: modelValue }"
+        @click="handleChecked"
+      ></div>
+      <input
+        type="text"
+        class="editor"
+        :value="text"
+        @input="handleTextChange"
+      />
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    modelValue: Boolean,
+    text: String,
+    // 添加v-model的自定义修饰符
+    textModifiers: {
+      default: () => ({}),
+    },
+  },
+  setup(props, ctx) {
+    // console.log("xx", props.textModifiers);
+
+    const handleChecked = () => {
+      // 父组件若想v-model简写，事件名得为update:modelValue
+      ctx.emit("update:modelValue", !props.modelValue);
+    };
+
+    const handleTextChange = (e) => {
+      let value = e.target.value;
+      if (props.textModifiers && props.textModifiers.trim) {
+        value = value.trim();
+      }
+      ctx.emit("update:text", value);
+    };
+
+    return {
+      handleChecked,
+      handleTextChange,
+    };
+  },
+};
 </script>
 
 <style scoped>
